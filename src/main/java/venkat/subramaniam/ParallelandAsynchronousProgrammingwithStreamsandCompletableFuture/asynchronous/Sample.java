@@ -8,16 +8,6 @@ public class Sample {
 
     //Non Blocking
 
-    public static CompletableFuture<Integer> create(){
-        ForkJoinPool pool = new ForkJoinPool(10);
-        return CompletableFuture.supplyAsync(()->compute(),pool);
-    }
-
-    public  static int compute(){
-       //sleep(1000);
-       return 2;
-    }
-
     private static boolean sleep(int ms) {
 
         try {
@@ -28,9 +18,7 @@ public class Sample {
         }
 
     }
-    public static void printIt (int value){
-        System.out.println(value + " -- "+ Thread.currentThread());
-    }
+
 
     public  static  void main(String[] args) throws ExecutionException, InterruptedException {
 
@@ -42,7 +30,35 @@ public class Sample {
         //Function <T,R> R apply(T)          - map
         //Consumer<T> void accept(T)         - forEach
 
-     create().thenAccept(System.out::println).thenRun(()->System.out.println("That went well"));
+
+     /*
+     * Stream                                                   CompletableFuture
+     * zero, one, or more data                                  zero or one
+     * only data channel                                        data channel and error channel
+     * forEach                                                  thenAccept
+     * map                                                      thenApply
+     * pipeline                                                 pipeline
+     * lazy                                                     lazy
+     *
+     *
+     *
+     * */
+
+        CompletableFuture<Integer> future =
+                new CompletableFuture<>();
+
+                    future.thenApply(data -> data *2 )
+                        .thenApply(data-> data+1).thenAccept(data -> System.out.println(data));
+
+        System.out.println("built the pipeline");
+        
+        sleep(1000);
+
+        future.complete(2);
+
+        sleep(1000);
+
+
 
 
     }
