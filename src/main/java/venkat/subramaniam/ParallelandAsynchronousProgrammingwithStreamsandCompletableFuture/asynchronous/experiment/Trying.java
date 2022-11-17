@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutionException;
 public class Trying {
 
     // https://stackoverflow.com/questions/49839557/completablefuture-several-tasks
+    // http://www.java2s.com/example/java/thread/executing-multiple-tasks-asynchronously-with-completablefuture-objects.html
 
     public static CompletableFuture<String> method(String s){
         return CompletableFuture.supplyAsync(()->s);

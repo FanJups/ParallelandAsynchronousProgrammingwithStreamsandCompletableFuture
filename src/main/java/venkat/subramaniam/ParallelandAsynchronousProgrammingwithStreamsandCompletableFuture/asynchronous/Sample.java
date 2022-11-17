@@ -2,56 +2,58 @@ package venkat.subramaniam.ParallelandAsynchronousProgrammingwithStreamsandCompl
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
 
 public class Sample {
 
     //Non Blocking
 
     public static CompletableFuture<Integer> create(){
-        return CompletableFuture.supplyAsync(()->2);
+        ForkJoinPool pool = new ForkJoinPool(10);
+        return CompletableFuture.supplyAsync(()->compute(),pool);
     }
 
     public  static int compute(){
 
-//        try {
-//            Thread.sleep(5000);
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
-       return 3;
+System.out.println("compute: "+Thread.currentThread());
+       //sleep(1000);
+       return 2;
     }
 
-    public static CompletableFuture<Integer> createCompute(){
-        return CompletableFuture.supplyAsync(()->compute());
+    private static boolean sleep(int ms) {
+
+        try {
+            Thread.sleep(ms);
+            return true;
+        } catch (InterruptedException e) {
+            return false;
+        }
+
+    }
+    public static void printIt (int value){
+        System.out.println(value + " -- "+ Thread.currentThread());
     }
 
     public  static  void main(String[] args) throws ExecutionException, InterruptedException {
 
-
-
         //Famous or popular functional interfaces
 
-                                             //Stream
+        //Stream
         //Supplier<T> T get()                - factories
         //Predicate boolean test(T)          - filter
         //Function <T,R> R apply(T)          - map
         //Consumer<T> void accept(T)         - forEach
 
-        create()
-                .thenAccept(System.out::println)
-                .thenRun(()-> System.out.println("This never dies"))
-                .thenRun(()-> System.out.println("Really, this never dies"))
-                .thenRun(()-> System.out.println("Really, really, this never dies"));
+        System.out.println("In main "+ Thread.currentThread());
 
-        System.out.println("got it");
+        CompletableFuture<Integer> future = create();
+sleep(100);
 
-        Thread.sleep(100);
+        future.thenAccept(data -> printIt(data));
 
-        System.out.println(createCompute().getNow(0)); //Bad idea, the best thing to do with get is to forget.blocking call
+        System.out.println("Here");
 
-        System.out.println("here");
-
-
+        sleep(1000);
 
     }
 }
