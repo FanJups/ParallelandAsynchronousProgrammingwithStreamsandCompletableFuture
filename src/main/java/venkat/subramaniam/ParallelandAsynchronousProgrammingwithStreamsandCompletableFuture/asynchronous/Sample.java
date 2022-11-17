@@ -14,8 +14,6 @@ public class Sample {
     }
 
     public  static int compute(){
-
-System.out.println("compute: "+Thread.currentThread());
        //sleep(1000);
        return 2;
     }
@@ -44,16 +42,8 @@ System.out.println("compute: "+Thread.currentThread());
         //Function <T,R> R apply(T)          - map
         //Consumer<T> void accept(T)         - forEach
 
-        System.out.println("In main "+ Thread.currentThread());
+     create().thenAccept(System.out::println).thenRun(()->System.out.println("That went well"));
 
-        CompletableFuture<Integer> future = create();
-sleep(100);
-
-        future.thenAccept(data -> printIt(data));
-
-        System.out.println("Here");
-
-        sleep(1000);
 
     }
 }
