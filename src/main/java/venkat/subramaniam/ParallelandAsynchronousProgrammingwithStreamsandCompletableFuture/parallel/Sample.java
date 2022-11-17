@@ -1,4 +1,4 @@
-package venkat.subramaniam.ParallelandAsynchronousProgrammingwithStreamsandCompletableFuture;
+package venkat.subramaniam.ParallelandAsynchronousProgrammingwithStreamsandCompletableFuture.parallel;
 
 import java.util.Arrays;
 import java.util.List;
