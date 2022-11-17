@@ -19,6 +19,28 @@ public class Sample {
 
     }
 
+    public static  int compute(){
+        throw new RuntimeException("something went wrong");
+        //return 2;
+    }
+
+    public static CompletableFuture<Integer> create(){
+
+        return CompletableFuture.supplyAsync(()->compute());
+    }
+
+    public   static  Void  handleException(Throwable throwable){
+
+        System.out.println("ERROR: "+throwable);
+        throw new RuntimeException("it is beyond all hope");
+    }
+
+    public   static  int  handleException2(Throwable throwable){
+
+        System.out.println("ERROR: "+throwable);
+        return -1;
+    }
+
 
     public  static  void main(String[] args) throws ExecutionException, InterruptedException {
 
@@ -39,26 +61,22 @@ public class Sample {
      * map                                                      thenApply
      * pipeline                                                 pipeline
      * lazy                                                     lazy
+     *exception - oops                                          error channel
      *
      *
      *
+     * data channel
+     *      return                  blow up                             return
+     * ----------------------f---f-----f                           ------f------- thens
+     *                                  \                         / return
+     *                                   -------f-----f----f------f    exceptionals
+     * error channel                       blow up
      * */
 
-        CompletableFuture<Integer> future =
-                new CompletableFuture<>();
-
-                    future.thenApply(data -> data *2 )
-                        .thenApply(data-> data+1).thenAccept(data -> System.out.println(data));
-
-        System.out.println("built the pipeline");
-        
-        sleep(1000);
-
-        future.complete(2);
-
-        sleep(1000);
-
-
+        create().thenApply(data->data*2)
+                .exceptionally(throwable -> handleException2(throwable))
+                .thenAccept(data->System.out.println(data))
+                .exceptionally(throwable -> handleException(throwable));
 
 
     }
