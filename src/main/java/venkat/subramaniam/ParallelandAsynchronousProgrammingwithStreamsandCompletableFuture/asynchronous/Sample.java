@@ -3,6 +3,7 @@ package venkat.subramaniam.ParallelandAsynchronousProgrammingwithStreamsandCompl
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
 
 public class Sample {
 
@@ -19,26 +20,15 @@ public class Sample {
 
     }
 
-    public static  int compute(){
-        throw new RuntimeException("something went wrong");
-        //return 2;
-    }
-
     public static CompletableFuture<Integer> create(){
 
         return CompletableFuture.supplyAsync(()->compute());
     }
 
-    public   static  Void  handleException(Throwable throwable){
 
-        System.out.println("ERROR: "+throwable);
-        throw new RuntimeException("it is beyond all hope");
-    }
-
-    public   static  int  handleException2(Throwable throwable){
-
-        System.out.println("ERROR: "+throwable);
-        return -1;
+    public  static int compute(){
+        //sleep(1000);
+        return 2;
     }
 
 
@@ -71,12 +61,30 @@ public class Sample {
      *                                  \                         / return
      *                                   -------f-----f----f------f    exceptionals
      * error channel                       blow up
+     *
+     *
+     * Both in life and programming never do something without timeout
      * */
 
-        create().thenApply(data->data*2)
-                .exceptionally(throwable -> handleException2(throwable))
-                .thenAccept(data->System.out.println(data))
-                .exceptionally(throwable -> handleException(throwable));
+        CompletableFuture<Integer> future =
+                new CompletableFuture<>();
+
+        future.thenApply(data -> data *2 )
+                .thenApply(data-> data+1).thenAccept(data -> System.out.println(data));
+
+        System.out.println("built the pipeline");
+
+      //  sleep(1000);
+
+       // future.complete(2);
+        //future.completeExceptionally()
+        future.completeOnTimeout(0,2, TimeUnit.SECONDS);
+
+        sleep(1000);
+
+      future.complete(2);
+
+      //future.orTimeout(2,TimeUnit.SECONDS);
 
 
     }
